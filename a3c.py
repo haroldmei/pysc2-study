@@ -33,20 +33,10 @@ from constants import USE_GPU
 from constants import ACTION_SIZE
 
 
-def log_uniform(lo, hi, rate):
-  log_lo = math.log(lo)
-  log_hi = math.log(hi)
-  v = log_lo * (1-rate) + log_hi * rate
-  return math.exp(v)
 
-device = "/cpu:0"
-if USE_GPU:
-  device = "/gpu:0"
-
-initial_learning_rate = log_uniform(INITIAL_ALPHA_LOW,
-                                    INITIAL_ALPHA_HIGH,
-                                    INITIAL_ALPHA_LOG_RATE)
-
+from absl import flags
+FLAGS = flags.FLAGS
+FLAGS(['run.py'])
 
 parser = argparse.ArgumentParser(description='Starcraft 2 deep RL agents')
 parser.add_argument('experiment_id', type=str,
@@ -100,6 +90,20 @@ args = parser.parse_args()
 # TODO write args to config file and store together with summaries (https://pypi.python.org/pypi/ConfigArgParse)
 args.train = not args.eval
 
+def log_uniform(lo, hi, rate):
+  log_lo = math.log(lo)
+  log_hi = math.log(hi)
+  v = log_lo * (1-rate) + log_hi * rate
+  return math.exp(v)
+
+device = "/cpu:0"
+if USE_GPU:
+  device = "/gpu:0"
+
+initial_learning_rate = log_uniform(INITIAL_ALPHA_LOW,
+                                    INITIAL_ALPHA_HIGH,
+                                    INITIAL_ALPHA_LOG_RATE)
+
 """ environment preparation """
 
 ckpt_path = os.path.join(args.save_dir, args.experiment_id)
@@ -123,7 +127,7 @@ env_fns = [partial(make_sc2env, **vis_env_args)] * num_vis
 num_no_vis = args.envs - num_vis
 if num_no_vis > 0:
     env_fns.extend([partial(make_sc2env, **env_args)] * num_no_vis)
-envs = SingleEnv(env_fns)
+envs = SubprocVecEnv(env_fns)
 
 
 global_t = 0
@@ -158,19 +162,21 @@ grad_applier = RMSPropApplier(learning_rate = learning_rate_input,
                               device = device)
 
 for i in range(PARALLEL_SIZE):
-  training_thread = A3CTrainingThread(i,
-                                      global_network,
-                                      initial_learning_rate,
-                                      learning_rate_input,
-                                      grad_applier,
-                                      MAX_TIME_STEP,
+  training_thread = A3CTrainingThread(sess=sess, thread_index=i,
+                                      global_network=global_network,
+                                      initial_learning_rate=initial_learning_rate,
+                                      learning_rate_input=learning_rate_input,
+                                      grad_applier=grad_applier,
+                                      max_global_time_step=MAX_TIME_STEP,
                                       device = device,
                                       network_data_format=network_data_format,
                                       value_loss_weight=args.value_loss_weight,
                                       entropy_weight=args.entropy_weight,
                                       learning_rate=args.lr,
                                       max_to_keep=args.max_to_keep,
-                                      envs=envs)
+                                      envs=envs,
+                                      res=args.res,
+                                      n_steps=args.steps_per_batch)
 
   training_threads.append(training_thread)
 

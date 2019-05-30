@@ -52,11 +52,11 @@ class AdvActorCriticNetwork(object):
       self._build(static_shape_channels, resolution)
 
       # can i do this?
-      #variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope)
-      #self.saver = tf.train.Saver(variables, max_to_keep=self.max_to_keep)
-      #self.init_op = tf.variables_initializer(variables)
-      #train_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES, scope=scope)
-      #self.train_summary_op = tf.summary.merge(train_summaries)
+      variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_name)
+      self.saver = tf.train.Saver(variables, max_to_keep=self.max_to_keep)
+      self.init_op = tf.variables_initializer(variables)
+      train_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES, scope=scope_name)
+      self.train_summary_op = tf.summary.merge(train_summaries)
 
   def _build(self, static_shape_channels, resolution):
     """Create tensorflow graph for A2C agent.
@@ -232,7 +232,7 @@ class AdvActorCriticNetwork(object):
   def get_vars(self):
     scope_name = "net_" + str(self._thread_index)
     with tf.device(self._device), tf.variable_scope(scope_name) as scope:
-      variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope)
+      variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope_name)
       return variables
 
   def sync_from(self, src_netowrk, name=None):
