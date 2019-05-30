@@ -4,8 +4,8 @@ import tensorflow as tf
 from pysc2.lib.actions import FunctionCall, FUNCTIONS
 from pysc2.lib.actions import TYPES as ACTION_TYPES
 
-from rl.pre_processing import Preprocessor
-from rl.pre_processing import is_spatial_action, stack_ndarray_dicts
+from pre_processing import Preprocessor
+from pre_processing import is_spatial_action, stack_ndarray_dicts
 
 
 class A2CRunner():
@@ -18,7 +18,7 @@ class A2CRunner():
                discount=0.99):
     """
     Args:
-      agent: A2CAgent instance.
+      agent: AdvActorCriticNetwork instance.
       envs: SubprocVecEnv instance.
       summary_writer: summary writer to log episode scores.
       train: whether to train the agent.

@@ -5,26 +5,19 @@ from tensorflow.contrib import layers
 from pysc2.lib import actions
 from pysc2.lib import features
 
-from rl.pre_processing import is_spatial_action, NUM_FUNCTIONS, FLAT_FEATURES
+from pre_processing import is_spatial_action, NUM_FUNCTIONS, FLAT_FEATURES
 
 from game_ac_network import GameACNetwork
 
 
-class FullyConv(GameACNetwork):
+class FullyConv(object):
   """FullyConv network from https://arxiv.org/pdf/1708.04782.pdf.
 
   Both, NHWC and NCHW data formats are supported for the network
   computations. Inputs and outputs are always in NHWC.
   """
 
-  def __init__(self, 
-               action_size,
-               thread_index, # -1 for global               
-               device="/cpu:0",
-               data_format='NCHW'):
-    self._action_size = action_size
-    self._thread_index = thread_index
-    self._device = device    
+  def __init__(self, data_format='NCHW'):
     self.data_format = data_format
 
   def embed_obs(self, x, spec, embed_fn):

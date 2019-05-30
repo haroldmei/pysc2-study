@@ -10,22 +10,31 @@ from fully_conv import FullyConv
 from util import safe_log, safe_div
 
 
-class A2CAgent():
+class AdvActorCriticNetwork(object):
   """A2C agent.
 
   Run build(...) first, then init() or load(...).
   """
   def __init__(self,
                sess,
+               action_size,
+               thread_index, # -1 for global
+               device="/cpu:0",
                network_cls=FullyConv,
                network_data_format='NCHW',
                value_loss_weight=0.5,
                entropy_weight=1e-3,
                learning_rate=7e-4,
                max_gradient_norm=1.0,
-               max_to_keep=5):
+               max_to_keep=5
+               ):
     self.sess = sess
     self.network_cls = network_cls
+
+    self._action_size = action_size
+    self._thread_index = thread_index
+    self._device = device
+
     self.network_data_format = network_data_format
     self.value_loss_weight = value_loss_weight
     self.entropy_weight = entropy_weight
@@ -34,14 +43,20 @@ class A2CAgent():
     self.train_step = 0
     self.max_to_keep = max_to_keep
 
+  #scope of variables??
   def build(self, static_shape_channels, resolution, scope=None, reuse=None):
-    #with tf.variable_scope(scope, reuse=reuse):
-    self._build(static_shape_channels, resolution)
-    variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope)
-    self.saver = tf.train.Saver(variables, max_to_keep=self.max_to_keep)
-    self.init_op = tf.variables_initializer(variables)
-    train_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES, scope=scope)
-    self.train_summary_op = tf.summary.merge(train_summaries)
+
+    scope_name = "net_" + str(self._thread_index)
+    with tf.device(self._device), tf.variable_scope(scope_name) as scope:
+      #with tf.variable_scope(scope, reuse=reuse):
+      self._build(static_shape_channels, resolution)
+
+      # can i do this?
+      #variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope)
+      #self.saver = tf.train.Saver(variables, max_to_keep=self.max_to_keep)
+      #self.init_op = tf.variables_initializer(variables)
+      #train_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES, scope=scope)
+      #self.train_summary_op = tf.summary.merge(train_summaries)
 
   def _build(self, static_shape_channels, resolution):
     """Create tensorflow graph for A2C agent.
@@ -195,6 +210,44 @@ class A2CAgent():
     self.saver.restore(self.sess, ckpt.model_checkpoint_path)
     self.train_step = int(ckpt.model_checkpoint_path.split('-')[-1])
     print("Loaded agent at train_step %d" % self.train_step)
+
+
+  """ 
+  Support of asyn ac, same as calling 'step'
+  """
+  def run_policy_and_value(self, sess, s_t):
+    feed_dict = self.get_obs_feed(s_t)
+    return sess.run([self.samples, self.value], feed_dict=feed_dict)
+
+  def run_policy(self, sess, s_t):
+    feed_dict = self.get_obs_feed(s_t)
+    pi_out = sess.run( self.policy, feed_dict = feed_dict )
+    return pi_out[0]
+
+  def run_value(self, sess, s_t):
+    feed_dict = self.get_obs_feed(s_t)
+    v_out = sess.run( self.value, feed_dict = feed_dict )
+    return v_out[0]
+
+  def get_vars(self):
+    scope_name = "net_" + str(self._thread_index)
+    with tf.device(self._device), tf.variable_scope(scope_name) as scope:
+      variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope)
+      return variables
+
+  def sync_from(self, src_netowrk, name=None):
+      src_vars = src_netowrk.get_vars()
+      dst_vars = self.get_vars()
+
+      sync_ops = []
+
+      with tf.device(self._device):
+          with tf.name_scope(name, "GameACNetwork", []) as name:
+              for (src_var, dst_var) in zip(src_vars, dst_vars):
+                  sync_op = tf.assign(dst_var, src_var)
+                  sync_ops.append(sync_op)
+
+              return tf.group(*sync_ops, name=name)
 
 
 def mask_unavailable_actions(available_actions, fn_pi):
