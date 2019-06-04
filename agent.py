@@ -35,6 +35,7 @@ from pysc2.env import sc2_env
 from pysc2.lib import point_flag
 from pysc2.lib import stopwatch
 
+import tensorflow as tf
 
 FLAGS = flags.FLAGS
 
