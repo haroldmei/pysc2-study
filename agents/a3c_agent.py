@@ -26,7 +26,7 @@ class A3CAgent(object):
   config = tf.ConfigProto(allow_soft_placement=True)
   config.gpu_options.allow_growth = True
   sess = tf.Session(config=config)
-  summary_writer = tf.summary.FileWriter(LOG)
+  summary_writer = tf.summary.FileWriter('./log/'+FLAGS.map)
 
   """An agent specifically for solving the mini-game maps."""
   def __init__(self, training=True, msize=FLAGS.feature_minimap_size, ssize=FLAGS.feature_minimap_size, name='A3C/A3CAgent'):
