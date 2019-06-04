@@ -88,6 +88,7 @@ flags.DEFINE_integer("screen_resolution", 64, "Resolution for screen feature lay
 flags.DEFINE_integer("minimap_resolution", 64, "Resolution for minimap feature layers.")
 flags.DEFINE_string("device", "0", "Device for training.")
 flags.DEFINE_string("map", None, "Name of a map to use.")
+flags.DEFINE_string("log_path", "./log/", "Path for log.")
 flags.mark_flag_as_required("map")
 
 FLAGS(sys.argv)
