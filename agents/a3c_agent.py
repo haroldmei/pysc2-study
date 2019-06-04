@@ -21,7 +21,7 @@ class A3CAgent(object):
   DEVICE = ['/gpu:0']
 
   """An agent specifically for solving the mini-game maps."""
-  def __init__(self, training=True, msize=FLAGS.feature_minimap_size, ssize=FLAGS.feature_screen_size, name='A3C/A3CAgent'):
+  def __init__(self, training=True, msize=FLAGS.feature_minimap_size, ssize=FLAGS.feature_minimap_size, name='A3C/A3CAgent'):
     self.name = name
     self.training = training
     self.summary = []
