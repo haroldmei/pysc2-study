@@ -30,8 +30,8 @@ class A3CAgent(object):
     self.msize = msize[0]
     self.ssize = ssize[0]
     self.isize = len(actions.FUNCTIONS)
-    A3CAgent.num_agents += 1
     self.build_model(A3CAgent.num_agents > 0, A3CAgent.DEVICE[A3CAgent.num_agents % len(A3CAgent.DEVICE)], 'fcn')
+    A3CAgent.num_agents += 1
 
 
   def setup(self, sess, summary_writer):
