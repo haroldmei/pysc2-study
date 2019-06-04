@@ -34,6 +34,9 @@ from pysc2.lib import stopwatch
 
 
 FLAGS = flags.FLAGS
+
+flags.DEFINE_bool("training", True, "Whether to train agents.")
+
 flags.DEFINE_bool("render", True, "Whether to render with pygame.")
 point_flag.DEFINE_point("feature_screen_size", "84",
                         "Resolution for screen feature layers.")
@@ -78,6 +81,16 @@ flags.DEFINE_bool("save_replay", True, "Whether to save a replay at the end.")
 
 flags.DEFINE_string("map", None, "Name of a map to use.")
 flags.mark_flag_as_required("map")
+
+FLAGS(sys.argv)
+if FLAGS.training:
+  PARALLEL = FLAGS.parallel
+  MAX_AGENT_STEPS = FLAGS.max_agent_steps
+  DEVICE = ['/gpu:'+dev for dev in FLAGS.device.split(',')]
+else:
+  PARALLEL = 1
+  MAX_AGENT_STEPS = 1e5
+  DEVICE = ['/cpu:0']
 
 
 def run_thread(agent, players, map_name, visualize):
