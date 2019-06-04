@@ -82,6 +82,7 @@ flags.DEFINE_integer("parallel", 1, "How many instances to run in parallel.")
 
 flags.DEFINE_bool("save_replay", True, "Whether to save a replay at the end.")
 
+flags.DEFINE_string("device", "0", "Device for training.")
 flags.DEFINE_string("map", None, "Name of a map to use.")
 flags.mark_flag_as_required("map")
 
