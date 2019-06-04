@@ -183,6 +183,7 @@ def main(unused_argv):
 
   threads = []
   for i in range(FLAGS.parallel - 1):
+    print('agent name,', agents[i])
     t = threading.Thread(target=run_thread,
                          args=(agents[i], players, FLAGS.map, False))
     threads.append(t)
