@@ -15,10 +15,18 @@ from absl import flags
 FLAGS = flags.FLAGS
 
 class A3CAgent(object):
+
+  '''
+  Can I do this?
+  '''
   num_agents = 0
   PARALLEL = FLAGS.parallel
   MAX_AGENT_STEPS = FLAGS.max_agent_steps
   DEVICE = ['/gpu:0']
+  config = tf.ConfigProto(allow_soft_placement=True)
+  config.gpu_options.allow_growth = True
+  sess = tf.Session(config=config)
+  summary_writer = tf.summary.FileWriter(LOG)
 
   """An agent specifically for solving the mini-game maps."""
   def __init__(self, training=True, msize=FLAGS.feature_minimap_size, ssize=FLAGS.feature_minimap_size, name='A3C/A3CAgent'):
@@ -31,6 +39,7 @@ class A3CAgent(object):
     self.ssize = ssize[0]
     self.isize = len(actions.FUNCTIONS)
     self.build_model(A3CAgent.num_agents > 0, A3CAgent.DEVICE[A3CAgent.num_agents % len(A3CAgent.DEVICE)], 'fcn')
+    self.setup(A3CAgent.sess, A3CAgent.summary_writer)
     A3CAgent.num_agents += 1
 
 
