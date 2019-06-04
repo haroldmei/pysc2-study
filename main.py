@@ -14,6 +14,7 @@ from pysc2 import maps
 from pysc2.env import available_actions_printer
 from pysc2.env import sc2_env
 from pysc2.lib import stopwatch
+from pysc2.lib import point_flag
 import tensorflow as tf
 
 from run_loop import run_loop
@@ -35,7 +36,6 @@ flags.DEFINE_string("map", "MoveToBeacon", "Name of a map to use.")
 flags.DEFINE_bool("render", True, "Whether to render with pygame.")
 flags.DEFINE_integer("screen_resolution", 64, "Resolution for screen feature layers.")
 flags.DEFINE_integer("minimap_resolution", 64, "Resolution for minimap feature layers.")
-flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
 point_flag.DEFINE_point("feature_screen_size", "84",
                         "Resolution for screen feature layers.")
@@ -45,6 +45,8 @@ point_flag.DEFINE_point("rgb_screen_size", None,
                         "Resolution for rendered screen.")
 point_flag.DEFINE_point("rgb_minimap_size", None,
                         "Resolution for rendered minimap.")
+
+flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
 flags.DEFINE_string("agent", "agents.a3c_agent.A3CAgent", "Which agent to run.")
 flags.DEFINE_string("net", "fcn", "atari or fcn.")
