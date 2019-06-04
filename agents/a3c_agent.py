@@ -27,8 +27,8 @@ class A3CAgent(object):
     self.summary = []
     # Minimap size, screen size and info size
     #assert msize == ssize
-    self.msize = msize
-    self.ssize = ssize
+    self.msize = msize[0]
+    self.ssize = ssize[0]
     self.isize = len(actions.FUNCTIONS)
     A3CAgent.num_agents += 1
     self.build_model(A3CAgent.num_agents > 0, A3CAgent.DEVICE[A3CAgent.num_agents % len(A3CAgent.DEVICE)], 'fcn')
@@ -56,6 +56,7 @@ class A3CAgent(object):
         assert tf.get_variable_scope().reuse
 
       # Set inputs of networks
+      print('self.msize=',self.msize)
       self.minimap = tf.placeholder(tf.float32, [None, U.minimap_channel(), self.msize, self.msize], 'minimap')
       self.screen = tf.placeholder(tf.float32, [None, U.screen_channel(), self.ssize, self.ssize], name='screen')
       self.info = tf.placeholder(tf.float32, [None, self.isize], name='info')
