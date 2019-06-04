@@ -46,6 +46,13 @@ point_flag.DEFINE_point("rgb_screen_size", None,
 point_flag.DEFINE_point("rgb_minimap_size", None,
                         "Resolution for rendered minimap.")
 
+flags.DEFINE_enum("action_space", None, sc2_env.ActionSpace._member_names_,  # pylint: disable=protected-access
+                  "Which action space to use. Needed if you take both feature "
+                  "and rgb observations.")
+                  
+flags.DEFINE_bool("use_feature_units", False,
+                  "Whether to include feature units.")
+                  
 flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
 flags.DEFINE_string("agent", "agents.a3c_agent.A3CAgent", "Which agent to run.")
