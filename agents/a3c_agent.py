@@ -50,6 +50,7 @@ class A3CAgent(object):
 
 
   def build_model(self, reuse, dev, ntype):
+    print ('should I reuse? reuse=', reuse)
     with tf.variable_scope(self.name) and tf.device(dev):
       if reuse:
         tf.get_variable_scope().reuse_variables()
