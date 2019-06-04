@@ -37,8 +37,18 @@ flags.DEFINE_integer("screen_resolution", 64, "Resolution for screen feature lay
 flags.DEFINE_integer("minimap_resolution", 64, "Resolution for minimap feature layers.")
 flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
+point_flag.DEFINE_point("feature_screen_size", "84",
+                        "Resolution for screen feature layers.")
+point_flag.DEFINE_point("feature_minimap_size", "64",
+                        "Resolution for minimap feature layers.")
+point_flag.DEFINE_point("rgb_screen_size", None,
+                        "Resolution for rendered screen.")
+point_flag.DEFINE_point("rgb_minimap_size", None,
+                        "Resolution for rendered minimap.")
+
 flags.DEFINE_string("agent", "agents.a3c_agent.A3CAgent", "Which agent to run.")
 flags.DEFINE_string("net", "fcn", "atari or fcn.")
+
 flags.DEFINE_enum("agent_race", "random", sc2_env.Race._member_names_,  # pylint: disable=protected-access
                   "Agent 1's race.")
 
@@ -47,6 +57,7 @@ flags.DEFINE_enum("bot_race", "random", sc2_env.Race._member_names_,  # pylint: 
 
 flags.DEFINE_enum("difficulty", "very_easy", sc2_env.Difficulty._member_names_,  # pylint: disable=protected-access
                   "If agent2 is a built-in Bot, it's strength.")
+
 
 flags.DEFINE_integer("max_agent_steps", 60, "Total agent steps.")
 
@@ -80,8 +91,13 @@ def run_thread(agent, map_name, visualize):
     bot_race=FLAGS.bot_race,
     difficulty=FLAGS.difficulty,
     step_mul=FLAGS.step_mul,
-    screen_size_px=(FLAGS.screen_resolution, FLAGS.screen_resolution),
-    minimap_size_px=(FLAGS.minimap_resolution, FLAGS.minimap_resolution),
+    agent_interface_format=sc2_env.parse_agent_interface_format(
+        feature_screen=FLAGS.feature_screen_size,
+        feature_minimap=FLAGS.feature_minimap_size,
+        rgb_screen=FLAGS.rgb_screen_size,
+        rgb_minimap=FLAGS.rgb_minimap_size,
+        action_space=FLAGS.action_space,
+        use_feature_units=FLAGS.use_feature_units),
     visualize=visualize) as env:
     env = available_actions_printer.AvailableActionsPrinter(env)
 
