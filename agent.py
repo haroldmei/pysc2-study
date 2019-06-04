@@ -39,6 +39,13 @@ import tensorflow as tf
 
 FLAGS = flags.FLAGS
 
+flags.DEFINE_bool("continuation", False, "Continuously training.")
+flags.DEFINE_float("learning_rate", 5e-4, "Learning rate for training.")
+flags.DEFINE_float("discount", 0.99, "Discount rate for future rewards.")
+flags.DEFINE_integer("max_steps", int(1e5), "Total steps for training.")
+flags.DEFINE_integer("snapshot_step", int(1e3), "Step for snapshot.")
+flags.DEFINE_string("snapshot_path", "./snapshot/", "Path for snapshot.")
+
 flags.DEFINE_bool("training", True, "Whether to train agents.")
 
 flags.DEFINE_bool("render", True, "Whether to render with pygame.")
