@@ -19,9 +19,9 @@ class A3CAgent(object):
     self.training = training
     self.summary = []
     # Minimap size, screen size and info size
-    assert msize == ssize
-    self.msize = msize
-    self.ssize = ssize
+    #assert msize == ssize
+    self.msize = msize[0]
+    self.ssize = ssize[0]
     self.isize = len(actions.FUNCTIONS)
 
 
@@ -29,6 +29,9 @@ class A3CAgent(object):
     self.sess = sess
     self.summary_writer = summary_writer
 
+  def setup2(self, obs_spec, action_spec):
+    self.obs_spec = obs_spec
+    self.action_spec = action_spec
 
   def initialize(self):
     init_op = tf.global_variables_initializer()
@@ -153,9 +156,9 @@ class A3CAgent(object):
     if obs.last():
       R = 0
     else:
-      minimap = np.array(obs.observation['minimap'], dtype=np.float32)
+      minimap = np.array(obs.observation['feature_minimap'], dtype=np.float32)
       minimap = np.expand_dims(U.preprocess_minimap(minimap), axis=0)
-      screen = np.array(obs.observation['screen'], dtype=np.float32)
+      screen = np.array(obs.observation['feature_screen'], dtype=np.float32)
       screen = np.expand_dims(U.preprocess_screen(screen), axis=0)
       info = np.zeros([1, self.isize], dtype=np.float32)
       info[0, obs.observation['available_actions']] = 1
@@ -180,9 +183,9 @@ class A3CAgent(object):
 
     rbs.reverse()
     for i, [obs, action, next_obs] in enumerate(rbs):
-      minimap = np.array(obs.observation['minimap'], dtype=np.float32)
+      minimap = np.array(obs.observation['feature_minimap'], dtype=np.float32)
       minimap = np.expand_dims(U.preprocess_minimap(minimap), axis=0)
-      screen = np.array(obs.observation['screen'], dtype=np.float32)
+      screen = np.array(obs.observation['feature_screen'], dtype=np.float32)
       screen = np.expand_dims(U.preprocess_screen(screen), axis=0)
       info = np.zeros([1, self.isize], dtype=np.float32)
       info[0, obs.observation['available_actions']] = 1
