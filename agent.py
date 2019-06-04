@@ -132,7 +132,7 @@ def run_thread(agent, players, map_name, visualize):
     #agents = [agent_cls() for agent_cls in agent_classes]
     run_loop([agent], env, MAX_AGENT_STEPS)
     if FLAGS.save_replay:
-      env.save_replay(agent.__name__)
+      env.save_replay(agent.name)
 
 
 def main(unused_argv):
