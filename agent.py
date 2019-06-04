@@ -100,6 +100,7 @@ else:
   MAX_AGENT_STEPS = 1e5
   DEVICE = ['/cpu:0']
 
+LOG = FLAGS.log_path+FLAGS.map+'/'+FLAGS.net
 
 def run_thread(agent, players, map_name, visualize):
   """Run one thread worth of the environment with agents."""
