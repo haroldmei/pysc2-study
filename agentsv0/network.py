@@ -77,6 +77,7 @@ def build_atari(minimap, screen, info, msize, ssize, num_action):
 
 def build_fcn(minimap, screen, info, msize, ssize, num_action):
   # Extract features
+  print ('minimap=',minimap)
   mconv1 = layers.conv2d(tf.transpose(minimap, [0, 2, 3, 1]),
                          num_outputs=16,
                          kernel_size=5,

@@ -11,18 +11,36 @@ from pysc2.lib import features
 from agents.network import build_net
 import utils as U
 
+from absl import flags
+FLAGS = flags.FLAGS
 
 class A3CAgent(object):
+
+  '''
+  Can I do this?
+  '''
+  num_agents = 0
+  PARALLEL = FLAGS.parallel
+  MAX_AGENT_STEPS = FLAGS.max_agent_steps
+  DEVICE = ['/gpu:0']
+  config = tf.ConfigProto(allow_soft_placement=True)
+  config.gpu_options.allow_growth = True
+  sess = tf.Session(config=config)
+  summary_writer = tf.summary.FileWriter('./log/'+FLAGS.map)
+
   """An agent specifically for solving the mini-game maps."""
-  def __init__(self, training, msize, ssize, name='A3C/A3CAgent'):
+  def __init__(self, training=True, msize=FLAGS.feature_minimap_size, ssize=FLAGS.feature_minimap_size, name='A3C/A3CAgent'):
     self.name = name
     self.training = training
     self.summary = []
     # Minimap size, screen size and info size
-    assert msize == ssize
-    self.msize = msize
-    self.ssize = ssize
+    #assert msize == ssize
+    self.msize = msize[0]
+    self.ssize = ssize[0]
     self.isize = len(actions.FUNCTIONS)
+    self.build_model(A3CAgent.num_agents > 0, A3CAgent.DEVICE[A3CAgent.num_agents % len(A3CAgent.DEVICE)], 'fcn')
+    self.setup(A3CAgent.sess, A3CAgent.summary_writer)
+    A3CAgent.num_agents += 1
 
 
   def setup(self, sess, summary_writer):
@@ -41,13 +59,15 @@ class A3CAgent(object):
 
 
   def build_model(self, reuse, dev, ntype):
+    print ('should I reuse? reuse=', reuse)
     with tf.variable_scope(self.name) and tf.device(dev):
       if reuse:
         tf.get_variable_scope().reuse_variables()
         assert tf.get_variable_scope().reuse
 
       # Set inputs of networks
-      self.minimap = tf.placeholder(tf.float32, [None, U.minimap_channel(), self.msize, self.msize], name='minimap')
+      print('self.msize=',self.msize)
+      self.minimap = tf.placeholder(tf.float32, [None, U.minimap_channel(), self.msize, self.msize], 'minimap')
       self.screen = tf.placeholder(tf.float32, [None, U.screen_channel(), self.ssize, self.ssize], name='screen')
       self.info = tf.placeholder(tf.float32, [None, self.isize], name='info')
 
