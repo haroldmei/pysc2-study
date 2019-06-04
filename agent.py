@@ -30,10 +30,12 @@ from future.builtins import range  # pylint: disable=redefined-builtin
 
 from pysc2 import maps
 from pysc2.env import available_actions_printer
-from pysc2.env import run_loop
+#from pysc2.env import run_loop
 from pysc2.env import sc2_env
 from pysc2.lib import point_flag
 from pysc2.lib import stopwatch
+
+from run_loop import run_loop
 
 import tensorflow as tf
 
