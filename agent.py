@@ -26,6 +26,7 @@ import threading
 
 from absl import app
 from absl import flags
+from absl import logging
 from future.builtins import range  # pylint: disable=redefined-builtin
 
 from pysc2 import maps
@@ -161,7 +162,8 @@ def run_thread(agent, players, map_name, visualize):
             
           obs = recorder[-1].observation
           score = obs["score_cumulative"][0]
-          print('Your score is '+str(score)+'!')
+          logging.info("Your score is: %s !", str(score))
+          #print('Your score is '+str(score)+'!')
       elif is_done:
         obs = recorder[-1].observation
         score = obs["score_cumulative"][0]
