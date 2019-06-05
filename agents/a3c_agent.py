@@ -14,14 +14,14 @@ import utils as U
 
 class A3CAgent(object):
   """An agent specifically for solving the mini-game maps."""
-  def __init__(self, training, msize, ssize, name='A3C/A3CAgent'):
+  def __init__(self, name='A3C/A3CAgent'):
     self.name = name
-    self.training = training
+    self.training = False 
     self.summary = []
     # Minimap size, screen size and info size
     #assert msize == ssize
-    self.msize = msize[0]
-    self.ssize = ssize[0]
+    self.msize = 64 #msize[0]
+    self.ssize = 64 #ssize[0]
     self.isize = len(actions.FUNCTIONS)
 
 
@@ -32,6 +32,11 @@ class A3CAgent(object):
   def setup2(self, obs_spec, action_spec):
     self.obs_spec = obs_spec
     self.action_spec = action_spec
+
+  def setup3(self, training, msize, ssize):
+    self.msize = msize[0]
+    self.ssize = ssize[0]
+    self.training = training
 
   def initialize(self):
     init_op = tf.global_variables_initializer()

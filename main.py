@@ -150,7 +150,8 @@ def _main(unused_argv):
 
   agents = []
   for i in range(PARALLEL):
-    agent = agent_cls(FLAGS.training, FLAGS.minimap_resolution, FLAGS.screen_resolution)
+    agent = agent_cls()
+    agent.setup3(FLAGS.training, FLAGS.feature_minimap_size, FLAGS.feature_minimap_size)
     agent.build_model(i > 0, DEVICE[i % len(DEVICE)], FLAGS.net)
     agents.append(agent)
 
