@@ -88,7 +88,7 @@ flags.DEFINE_enum("difficulty", "very_easy", sc2_env.Difficulty._member_names_, 
 
 flags.DEFINE_bool("profile", False, "Whether to turn on code profiling.")
 flags.DEFINE_bool("trace", False, "Whether to trace the code execution.")
-flags.DEFINE_integer("parallel", 12, "How many instances to run in parallel.")
+flags.DEFINE_integer("parallel", 4, "How many instances to run in parallel.")
 
 flags.DEFINE_bool("save_replay", True, "Whether to save a replay at the end.")
 
@@ -199,7 +199,8 @@ def main(unused_argv):
 
   agents = []
   for i in range(PARALLEL):
-    agent = agent_cls(FLAGS.training, FLAGS.feature_minimap_size, FLAGS.feature_minimap_size)
+    agent = agent_cls()
+    agent.setup3(FLAGS.training, FLAGS.feature_minimap_size, FLAGS.feature_minimap_size)
     agent.build_model(i > 0, DEVICE[i % len(DEVICE)], FLAGS.net)
     agents.append(agent)
 
@@ -219,7 +220,7 @@ def main(unused_argv):
 
   threads = []
   for i in range(FLAGS.parallel - 1):
-    print('agent name,', agents[i].name)
+    #print('agent name,', agents[i].name)
     t = threading.Thread(target=run_thread,
                          args=(agents[i], players, FLAGS.map, False))
     threads.append(t)
