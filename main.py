@@ -52,7 +52,10 @@ flags.DEFINE_enum("action_space", None, sc2_env.ActionSpace._member_names_,  # p
                   
 flags.DEFINE_bool("use_feature_units", False,
                   "Whether to include feature units.")
-                  
+flags.DEFINE_bool("disable_fog", False, "Whether to disable Fog of War.")
+
+flags.DEFINE_integer("game_steps_per_episode", None, "Game steps per episode.")
+flags.DEFINE_integer("max_episodes", 0, "Total episodes.")
 flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
 flags.DEFINE_string("agent", "agents.a3c_agent.A3CAgent", "Which agent to run.")
@@ -61,8 +64,16 @@ flags.DEFINE_string("net", "fcn", "atari or fcn.")
 flags.DEFINE_enum("agent_race", "random", sc2_env.Race._member_names_,  # pylint: disable=protected-access
                   "Agent 1's race.")
 
+flags.DEFINE_string("agent_name", None,
+                    "Name of the agent in replays. Defaults to the class name.")
 flags.DEFINE_enum("bot_race", "random", sc2_env.Race._member_names_,  # pylint: disable=protected-access
                   "Bot 1's race.")
+
+flags.DEFINE_string("agent2", "Bot", "Second agent, either Bot or agent class.")
+flags.DEFINE_string("agent2_name", None,
+                    "Name of the agent in replays. Defaults to the class name.")
+flags.DEFINE_enum("agent2_race", "random", sc2_env.Race._member_names_,  # pylint: disable=protected-access
+                  "Agent 2's race.")
 
 flags.DEFINE_enum("difficulty", "very_easy", sc2_env.Difficulty._member_names_,  # pylint: disable=protected-access
                   "If agent2 is a built-in Bot, it's strength.")
@@ -72,7 +83,7 @@ flags.DEFINE_integer("max_agent_steps", 60, "Total agent steps.")
 
 flags.DEFINE_bool("profile", False, "Whether to turn on code profiling.")
 flags.DEFINE_bool("trace", False, "Whether to trace the code execution.")
-flags.DEFINE_integer("parallel", 16, "How many instances to run in parallel.")
+flags.DEFINE_integer("parallel", 1, "How many instances to run in parallel.")
 flags.DEFINE_bool("save_replay", False, "Whether to save a replay at the end.")
 
 FLAGS(sys.argv)
@@ -94,14 +105,17 @@ if not os.path.exists(SNAPSHOT):
 
 
 def run_thread(agent, map_name, visualize):
+  players=[]
+  agent_module, agent_name = FLAGS.agent.rsplit(".", 1)
+  players.append(sc2_env.Agent(sc2_env.Race[FLAGS.agent_race],
+                               FLAGS.agent_name or agent_name))
+
   with sc2_env.SC2Env(
     map_name=map_name,
-    #agent_race=FLAGS.agent_race,
-    #bot_race=FLAGS.bot_race,
-    difficulty=FLAGS.difficulty,
+    players=players,
     step_mul=FLAGS.step_mul,
     agent_interface_format=sc2_env.parse_agent_interface_format(
-        feature_screen=FLAGS.feature_screen_size,
+        feature_screen=FLAGS.feature_minimap_size,
         feature_minimap=FLAGS.feature_minimap_size,
         rgb_screen=FLAGS.rgb_screen_size,
         rgb_minimap=FLAGS.rgb_minimap_size,

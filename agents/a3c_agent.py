@@ -7,12 +7,13 @@ import numpy as np
 import tensorflow as tf
 from pysc2.lib import actions
 from pysc2.lib import features
+from pysc2.agents import base_agent
 
 from agents.network import build_net
 import utils as U
 
 
-class A3CAgent(object):
+class A3CAgent(base_agent.BaseAgent):
   """An agent specifically for solving the mini-game maps."""
   def __init__(self, name='A3C/A3CAgent'):
     self.name = name
@@ -110,13 +111,14 @@ class A3CAgent(object):
 
 
   def step(self, obs):
-    minimap = np.array(obs.observation['feature_minimap'], dtype=np.float32)
+    minimap = np.array(obs.observation.feature_minimap, dtype=np.float32)
     minimap = np.expand_dims(U.preprocess_minimap(minimap), axis=0)
-    screen = np.array(obs.observation['feature_screen'], dtype=np.float32)
+    screen = np.array(obs.observation.feature_screen, dtype=np.float32)
     screen = np.expand_dims(U.preprocess_screen(screen), axis=0)
     # TODO: only use available actions
     info = np.zeros([1, self.isize], dtype=np.float32)
-    info[0, obs.observation['available_actions']] = 1
+    #info[0, obs.observation['available_actions']] = 1
+    info[0, obs.observation.available_actions] = 1
 
     feed = {self.minimap: minimap,
             self.screen: screen,
@@ -128,13 +130,14 @@ class A3CAgent(object):
     # Select an action and a spatial target
     non_spatial_action = non_spatial_action.ravel()
     spatial_action = spatial_action.ravel()
-    valid_actions = obs.observation['available_actions']
+    valid_actions = obs.observation.available_actions #['available_actions']
     act_id = valid_actions[np.argmax(non_spatial_action[valid_actions])]
     target = np.argmax(spatial_action)
     target = [int(target // self.ssize), int(target % self.ssize)]
 
     if False:
       print(actions.FUNCTIONS[act_id].name, target)
+      #print(self.action_spec.functions[act_id].name, target)
 
     # Epsilon greedy exploration
     if self.training and np.random.rand() < self.epsilon[0]:
@@ -148,6 +151,7 @@ class A3CAgent(object):
     # Set act_id and act_args
     act_args = []
     for arg in actions.FUNCTIONS[act_id].args:
+    #for arg in self.action_spec.functions[act_id].args:
       if arg.name in ('screen', 'minimap', 'screen2'):
         act_args.append([target[1], target[0]])
       else:
@@ -161,12 +165,13 @@ class A3CAgent(object):
     if obs.last():
       R = 0
     else:
-      minimap = np.array(obs.observation['feature_minimap'], dtype=np.float32)
+      minimap = np.array(obs.observation.feature_minimap, dtype=np.float32)
       minimap = np.expand_dims(U.preprocess_minimap(minimap), axis=0)
-      screen = np.array(obs.observation['feature_screen'], dtype=np.float32)
+      screen = np.array(obs.observation.feature_screen, dtype=np.float32)
       screen = np.expand_dims(U.preprocess_screen(screen), axis=0)
       info = np.zeros([1, self.isize], dtype=np.float32)
-      info[0, obs.observation['available_actions']] = 1
+      #info[0, obs.observation['available_actions']] = 1
+      info[0, obs.observation.available_actions] = 1
 
       feed = {self.minimap: minimap,
               self.screen: screen,
@@ -188,12 +193,13 @@ class A3CAgent(object):
 
     rbs.reverse()
     for i, [obs, action, next_obs] in enumerate(rbs):
-      minimap = np.array(obs.observation['feature_minimap'], dtype=np.float32)
+      minimap = np.array(obs.observation.feature_minimap, dtype=np.float32)
       minimap = np.expand_dims(U.preprocess_minimap(minimap), axis=0)
-      screen = np.array(obs.observation['feature_screen'], dtype=np.float32)
+      screen = np.array(obs.observation.feature_screen, dtype=np.float32)
       screen = np.expand_dims(U.preprocess_screen(screen), axis=0)
       info = np.zeros([1, self.isize], dtype=np.float32)
-      info[0, obs.observation['available_actions']] = 1
+      #info[0, obs.observation['available_actions']] = 1
+      info[0, obs.observation.available_actions] = 1
 
       minimaps.append(minimap)
       screens.append(screen)
@@ -205,7 +211,8 @@ class A3CAgent(object):
 
       value_target[i] = reward + disc * value_target[i-1]
 
-      valid_actions = obs.observation["available_actions"]
+      #valid_actions = obs.observation["available_actions"]
+      valid_actions = obs.observation.available_actions
       valid_non_spatial_action[i, valid_actions] = 1
       non_spatial_action_selected[i, act_id] = 1
 

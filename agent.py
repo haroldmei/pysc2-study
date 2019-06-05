@@ -72,7 +72,7 @@ flags.DEFINE_integer("game_steps_per_episode", None, "Game steps per episode.")
 flags.DEFINE_integer("max_episodes", 0, "Total episodes.")
 flags.DEFINE_integer("step_mul", 8, "Game steps per agent step.")
 
-flags.DEFINE_string("agent", "pysc2.agents.random_agent.RandomAgent",
+flags.DEFINE_string("agent", "agents.a3c_agent.A3CAgent",
                     "Which agent to run, as a python path to an Agent class.")
 flags.DEFINE_string("agent_name", None,
                     "Name of the agent in replays. Defaults to the class name.")
@@ -89,7 +89,7 @@ flags.DEFINE_enum("difficulty", "very_easy", sc2_env.Difficulty._member_names_, 
 
 flags.DEFINE_bool("profile", False, "Whether to turn on code profiling.")
 flags.DEFINE_bool("trace", False, "Whether to trace the code execution.")
-flags.DEFINE_integer("parallel", 4, "How many instances to run in parallel.")
+flags.DEFINE_integer("parallel", 8, "How many instances to run in parallel.")
 
 flags.DEFINE_bool("save_replay", True, "Whether to save a replay at the end.")
 

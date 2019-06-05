@@ -35,9 +35,15 @@ class RandomAgent(base_agent.BaseAgent):
   def initialize(self):
     pass
 
+  def update(self, rbs, disc, lr, cter):
+    pass
+
   def setup2(self, obs_spec, action_spec):
     self.obs_spec = obs_spec
     self.action_spec = action_spec
+
+  def save_model(self, path, count):
+    pass
 
   def step(self, obs):
     super(RandomAgent, self).step(obs)
