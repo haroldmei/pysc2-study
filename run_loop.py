@@ -35,10 +35,12 @@ def run_loop(agents, env, max_frames=0, max_episodes=0):
         #  return
         #if timesteps[0].last():
         #  break
-        
+
         timesteps = env.step(actions)
         
         is_done = (num_frames >= max_frames) or timesteps[0].last()
+        print(last_timesteps[0], actions[0], timesteps[0], is_done)
+
         yield [last_timesteps[0], actions[0], timesteps[0]], is_done
         if is_done == True:
           break
