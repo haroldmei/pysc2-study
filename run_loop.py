@@ -33,15 +33,16 @@ def run_loop(agents, env, max_frames=0, max_episodes=0):
                    for agent, timestep in zip(agents, timesteps)]
         #if max_frames and total_frames >= max_frames:
         #  return
-        if timesteps[0].last():
-          break
+        #if timesteps[0].last():
+        #  break
+        
         timesteps = env.step(actions)
         
         is_done = (num_frames >= max_frames) or timesteps[0].last()
         yield [last_timesteps[0], actions[0], timesteps[0]], is_done
         if is_done == True:
           break
-          
+
   except KeyboardInterrupt:
     pass
   finally:
