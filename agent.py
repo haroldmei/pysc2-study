@@ -236,7 +236,7 @@ def main(unused_argv):
     COUNTER = agent.load_model(SNAPSHOT)
 
   threads = []
-  for i in range(FLAGS.parallel - 1):
+  for i in range(PARALLEL - 1):
     #print('agent name,', agents[i].name)
     t = threading.Thread(target=run_thread,
                          args=(agents[i], players, FLAGS.map, False))
@@ -245,7 +245,7 @@ def main(unused_argv):
     t.start()
     time.sleep(5)
 
-  run_thread(agents[FLAGS.parallel - 1], players, FLAGS.map, FLAGS.render)
+  run_thread(agents[PARALLEL - 1], players, FLAGS.map, FLAGS.render)
 
   for t in threads:
     t.join()
