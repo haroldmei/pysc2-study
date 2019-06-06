@@ -122,6 +122,7 @@ if not os.path.exists(SNAPSHOT):
   os.makedirs(SNAPSHOT)
   
 summary_writer = tf.summary.FileWriter(LOG)
+total_score = 0
 
 def run_thread(agent, players, map_name, visualize):
   """Run one thread worth of the environment with agents."""
@@ -143,7 +144,7 @@ def run_thread(agent, players, map_name, visualize):
     #agents = [agent_cls() for agent_cls in agent_classes]
 
     start_at = 0
-    total_score = 0
+    global total_score
     replay_buffer = []
     for recorder, is_done in run_loop([agent], env, MAX_AGENT_STEPS):
       if FLAGS.training:
