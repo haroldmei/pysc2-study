@@ -114,6 +114,7 @@ else:
 LOG = FLAGS.log_path+FLAGS.map+'/'+FLAGS.net
 SNAPSHOT = FLAGS.snapshot_path+FLAGS.map+'/'+FLAGS.net
 COUNTER = 0
+START_WITH = 0
 LOCK = threading.Lock()
 if not os.path.exists(LOG):
   os.makedirs(LOG)
@@ -141,7 +142,8 @@ def run_thread(agent, players, map_name, visualize):
     env = available_actions_printer.AvailableActionsPrinter(env)
     #agents = [agent_cls() for agent_cls in agent_classes]
 
-    
+    start_at = 0
+    total_score = 0
     replay_buffer = []
     for recorder, is_done in run_loop([agent], env, MAX_AGENT_STEPS):
       if FLAGS.training:
@@ -151,6 +153,8 @@ def run_thread(agent, players, map_name, visualize):
           with LOCK:
             global COUNTER
             COUNTER += 1
+            if start_at == 0:
+              start_at = COUNTER
             counter = COUNTER
           # Learning rate schedule
           learning_rate = FLAGS.learning_rate * (1 - 0.9 * counter / FLAGS.max_steps)
@@ -163,8 +167,13 @@ def run_thread(agent, players, map_name, visualize):
             
           obs = recorder[-1].observation
           score = obs["score_cumulative"][0]
+          total_score += score
+          mean_score = total_score/(COUNTER - start_at)
           summary = tf.Summary()
           summary.value.add(tag='episode_score', simple_value=score)
+          summary_writer.add_summary(summary, COUNTER)
+          
+          summary.value.add(tag='mean_score', simple_value=mean_score)
           summary_writer.add_summary(summary, COUNTER)
 
           logging.info("Your score is: %s !", str(score))
