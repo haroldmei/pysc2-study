@@ -120,6 +120,7 @@ if not os.path.exists(LOG):
 if not os.path.exists(SNAPSHOT):
   os.makedirs(SNAPSHOT)
   
+summary_writer = tf.summary.FileWriter(LOG)
 
 def run_thread(agent, players, map_name, visualize):
   """Run one thread worth of the environment with agents."""
@@ -162,6 +163,10 @@ def run_thread(agent, players, map_name, visualize):
             
           obs = recorder[-1].observation
           score = obs["score_cumulative"][0]
+          summary = tf.Summary()
+          summary.value.add(tag='episode_score', simple_value=score)
+          summary_writer.add_summary(summary, COUNTER)
+
           logging.info("Your score is: %s !", str(score))
           #print('Your score is '+str(score)+'!')
       elif is_done:
@@ -210,7 +215,6 @@ def main(unused_argv):
   config.gpu_options.allow_growth = True
   sess = tf.Session(config=config)
 
-  summary_writer = tf.summary.FileWriter(LOG)
   for i in range(PARALLEL):
     agents[i].setup(sess, summary_writer)
 
