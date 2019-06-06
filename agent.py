@@ -151,12 +151,27 @@ def run_thread(agent, players, map_name, visualize):
         replay_buffer.append(recorder)
         if is_done:
           counter = 0
+          obs = recorder[-1].observation
+          score = obs["score_cumulative"][0]
+
           with LOCK:
             global COUNTER
             COUNTER += 1
             if start_at == 0:
               start_at = COUNTER
             counter = COUNTER
+            total_score += score
+            
+            mean_score = total_score/(COUNTER - start_at)
+            summary = tf.Summary()
+            summary.value.add(tag='episode_score', simple_value=score)
+            summary_writer.add_summary(summary, COUNTER)
+          
+            summary.value.add(tag='mean_score', simple_value=mean_score)
+            summary_writer.add_summary(summary, COUNTER)
+
+            logging.info("Your score is: %s !", str(score))
+
           # Learning rate schedule
           learning_rate = FLAGS.learning_rate * (1 - 0.9 * counter / FLAGS.max_steps)
           agent.update(replay_buffer, FLAGS.discount, learning_rate, counter)
@@ -166,18 +181,6 @@ def run_thread(agent, players, map_name, visualize):
           if counter >= FLAGS.max_steps:
             break
             
-          obs = recorder[-1].observation
-          score = obs["score_cumulative"][0]
-          total_score += score
-          mean_score = total_score/(COUNTER - start_at)
-          summary = tf.Summary()
-          summary.value.add(tag='episode_score', simple_value=score)
-          summary_writer.add_summary(summary, COUNTER)
-          
-          summary.value.add(tag='mean_score', simple_value=mean_score)
-          summary_writer.add_summary(summary, COUNTER)
-
-          logging.info("Your score is: %s !", str(score))
           #print('Your score is '+str(score)+'!')
       elif is_done:
         obs = recorder[-1].observation
