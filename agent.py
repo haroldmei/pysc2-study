@@ -172,18 +172,32 @@ def run_thread(agent, players, map_name, visualize):
           if counter >= FLAGS.max_steps:
             break
             
+          # i want a diagram!
           summary = tf.Summary()
           summary.value.add(tag='episode_score', simple_value=score)
           summary_writer.add_summary(summary, COUNTER)
         
           summary.value.add(tag='mean_score', simple_value=mean_score)
           summary_writer.add_summary(summary, COUNTER)
-          logging.info("Your score is: %s !", str(score))
+          logging.info("Your score is: %s, mean score is %s !", str(score), str(mean_score))
           #print('Your score is '+str(score)+'!')
+
       elif is_done:
+        start_at += 1
         obs = recorder[-1].observation
         score = obs["score_cumulative"][0]
-        print('Your score is '+str(score)+'!')
+        total_score += score
+        mean_score = total_score/start_at
+
+        # i want a diagram!
+        summary = tf.Summary()
+        summary.value.add(tag='episode_score', simple_value=score)
+        summary_writer.add_summary(summary, COUNTER)
+      
+        summary.value.add(tag='mean_score', simple_value=mean_score)
+        summary_writer.add_summary(summary, COUNTER)
+        logging.info("Your score is: %s, mean score is %s !", str(score), str(mean_score))
+
     if FLAGS.save_replay:
       env.save_replay(agent.name)
 
