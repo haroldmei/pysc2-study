@@ -153,7 +153,8 @@ def run_thread(agent, players, map_name, visualize):
       if FLAGS.training:
         #replay_buffer.append(recorder)
         if is_done:
-          BLOCK_Q.put(recorder)
+          with LOCK:
+            BLOCK_Q.put(recorder)
           
         if False: #is_done:
           counter = 0
@@ -275,7 +276,7 @@ def main(unused_argv):
       agent_classes.append(agent_cls)
       players.append(sc2_env.Agent(sc2_env.Race[FLAGS.agent2_race],
                                    FLAGS.agent2_name or agent_name))
-                                   
+
   # n+1 threads, n parallel plus 1 updater;
   agents = []
   for i in range(PARALLEL+1):
