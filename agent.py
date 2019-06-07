@@ -39,6 +39,7 @@ from pysc2.lib import stopwatch
 from run_loop import run_loop
 
 import tensorflow as tf
+import queue
 
 FLAGS = flags.FLAGS
 
@@ -124,6 +125,8 @@ if not os.path.exists(SNAPSHOT):
 summary_writer = tf.summary.FileWriter(LOG)
 total_score = 0
 
+BLOCK_Q = queue.Queue()
+
 def run_thread(agent, players, map_name, visualize):
   """Run one thread worth of the environment with agents."""
   with sc2_env.SC2Env(
@@ -148,8 +151,11 @@ def run_thread(agent, players, map_name, visualize):
     replay_buffer = []
     for recorder, is_done in run_loop([agent], env, MAX_AGENT_STEPS):
       if FLAGS.training:
-        replay_buffer.append(recorder)
+        #replay_buffer.append(recorder)
         if is_done:
+          BLOCK_Q.put(recorder)
+          
+        if False: #is_done:
           counter = 0
           obs = recorder[-1].observation
           score = obs["score_cumulative"][0]
@@ -183,13 +189,53 @@ def run_thread(agent, players, map_name, visualize):
           #print('Your score is '+str(score)+'!')
 
       elif is_done:
-        start_at += 1
         obs = recorder[-1].observation
         score = obs["score_cumulative"][0]
-        total_score += score
-        mean_score = total_score/start_at
+        print('Your score is '+str(score)+'!')
+    if FLAGS.save_replay:
+      env.save_replay(agent.name)
 
-        # i want a diagram!
+# a dedicated updater to apply gradient update.
+def run_update_thread(agent, players, map_name, visualize):
+  """Run one thread worth of the environment with agents."""
+  with sc2_env.SC2Env(
+      map_name=map_name,
+      players=players,
+      agent_interface_format=sc2_env.parse_agent_interface_format(
+          feature_screen=FLAGS.feature_minimap_size,
+          feature_minimap=FLAGS.feature_minimap_size,
+          rgb_screen=FLAGS.rgb_screen_size,
+          rgb_minimap=FLAGS.rgb_minimap_size,
+          action_space=FLAGS.action_space,
+          use_feature_units=FLAGS.use_feature_units),
+      step_mul=FLAGS.step_mul,
+      game_steps_per_episode=FLAGS.game_steps_per_episode,
+      disable_fog=FLAGS.disable_fog,
+      visualize=visualize) as env:
+    env = available_actions_printer.AvailableActionsPrinter(env)
+
+    counter = 0
+    sum_score = 0
+    while True:
+      if FLAGS.training:
+        recorder = BLOCK_Q.get()
+        counter+=1
+        
+        obs = recorder[-1].observation
+        score = obs["score_cumulative"][0]
+
+        sum_score += score
+        mean_score = total_score/counter
+
+        # Learning rate schedule
+        learning_rate = FLAGS.learning_rate * (1 - 0.9 * counter / FLAGS.max_steps)
+        agent.update([recorder], FLAGS.discount, learning_rate, counter)
+
+        if counter % FLAGS.snapshot_step == 1:
+          agent.save_model(SNAPSHOT, counter)
+        if counter >= FLAGS.max_steps:
+          break
+          
         summary = tf.Summary()
         summary.value.add(tag='episode_score', simple_value=score)
         summary_writer.add_summary(summary, COUNTER)
@@ -200,6 +246,7 @@ def run_thread(agent, players, map_name, visualize):
 
     if FLAGS.save_replay:
       env.save_replay(agent.name)
+
 
 
 def main(unused_argv):
@@ -228,9 +275,10 @@ def main(unused_argv):
       agent_classes.append(agent_cls)
       players.append(sc2_env.Agent(sc2_env.Race[FLAGS.agent2_race],
                                    FLAGS.agent2_name or agent_name))
-
+                                   
+  # n+1 threads, n parallel plus 1 updater;
   agents = []
-  for i in range(PARALLEL):
+  for i in range(PARALLEL+1):
     agent = agent_cls()
     agent.setup3(FLAGS.training, FLAGS.feature_minimap_size, FLAGS.feature_minimap_size)
     agent.build_model(i > 0, DEVICE[i % len(DEVICE)], FLAGS.net)
@@ -240,7 +288,7 @@ def main(unused_argv):
   config.gpu_options.allow_growth = True
   sess = tf.Session(config=config)
 
-  for i in range(PARALLEL):
+  for i in range(PARALLEL+1):
     agents[i].setup(sess, summary_writer)
 
   # only initialize once..
@@ -250,7 +298,7 @@ def main(unused_argv):
     COUNTER = agent.load_model(SNAPSHOT)
 
   threads = []
-  for i in range(PARALLEL - 1):
+  for i in range(PARALLEL):
     #print('agent name,', agents[i].name)
     t = threading.Thread(target=run_thread,
                          args=(agents[i], players, FLAGS.map, False))
@@ -259,7 +307,7 @@ def main(unused_argv):
     t.start()
     time.sleep(5)
 
-  run_thread(agents[PARALLEL - 1], players, FLAGS.map, FLAGS.render)
+  run_update_thread(agents[PARALLEL], players, FLAGS.map, FLAGS.render)
 
   for t in threads:
     t.join()
