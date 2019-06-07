@@ -152,11 +152,11 @@ def run_thread(agent, players, map_name, visualize):
     for recorder, is_done in run_loop([agent], env, MAX_AGENT_STEPS):
       if FLAGS.training:
         #replay_buffer.append(recorder)
-        if is_done:
-          with LOCK:
-            BLOCK_Q.put(recorder)
+        #if is_done:
+        #  with LOCK:
+        #    BLOCK_Q.put(recorder)
           
-        if False: #is_done:
+        if is_done:
           counter = 0
           obs = recorder[-1].observation
           score = obs["score_cumulative"][0]
@@ -279,7 +279,7 @@ def main(unused_argv):
 
   # n+1 threads, n parallel plus 1 updater;
   agents = []
-  for i in range(PARALLEL+1):
+  for i in range(PARALLEL):
     agent = agent_cls()
     agent.setup3(FLAGS.training, FLAGS.feature_minimap_size, FLAGS.feature_minimap_size)
     agent.build_model(i > 0, DEVICE[i % len(DEVICE)], FLAGS.net)
@@ -289,7 +289,7 @@ def main(unused_argv):
   config.gpu_options.allow_growth = True
   sess = tf.Session(config=config)
 
-  for i in range(PARALLEL+1):
+  for i in range(PARALLEL):
     agents[i].setup(sess, summary_writer)
 
   # only initialize once..
@@ -299,7 +299,7 @@ def main(unused_argv):
     COUNTER = agent.load_model(SNAPSHOT)
 
   threads = []
-  for i in range(PARALLEL):
+  for i in range(PARALLEL-1):
     #print('agent name,', agents[i].name)
     t = threading.Thread(target=run_thread,
                          args=(agents[i], players, FLAGS.map, False))
@@ -308,7 +308,8 @@ def main(unused_argv):
     t.start()
     time.sleep(5)
 
-  run_update_thread(agents[PARALLEL], players, FLAGS.map, FLAGS.render)
+  run_thread(agents[PARALLEL-1], players, FLAGS.map, FLAGS.render)
+  run_update_thread(agents[PARALLEL-1], players, FLAGS.map, FLAGS.render)
 
   for t in threads:
     t.join()
