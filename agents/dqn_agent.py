@@ -76,9 +76,9 @@ class DeepQAgent(base_agent.BaseAgent):
       non_spatial_action_prob = tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected, axis=1)
 
       q_value = spatial_action_prob + non_spatial_action_prob
-      advantage = tf.stop_gradient(self.value_target - q_value)
+      advantage = self.value_target - q_value
       value_loss = tf.reduce_mean(advantage*advantage)
-      
+
       self.summary.append(tf.summary.histogram('spatial_action_prob', spatial_action_prob))
       self.summary.append(tf.summary.histogram('non_spatial_action_prob', non_spatial_action_prob))
       self.summary.append(tf.summary.scalar('value_loss', value_loss))
