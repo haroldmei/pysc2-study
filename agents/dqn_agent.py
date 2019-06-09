@@ -87,7 +87,8 @@ class DeepQAgent(base_agent.BaseAgent):
       cliped_grad = []
       for grad, var in grads:
         self.summary.append(tf.summary.histogram(var.op.name, var))
-        self.summary.append(tf.summary.histogram(var.op.name+'/grad', grad if grad is not None else tf.zeros_like(var)))
+        grad = grad if grad is not None else tf.zeros_like(var)
+        self.summary.append(tf.summary.histogram(var.op.name+'/grad', grad))
         grad = tf.clip_by_norm(grad, 10.0)
         cliped_grad.append([grad, var])
       self.train_op = opt.apply_gradients(cliped_grad)
