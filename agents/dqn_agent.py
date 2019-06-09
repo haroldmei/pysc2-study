@@ -75,7 +75,7 @@ class DeepQAgent(base_agent.BaseAgent):
       spatial_action_prob = tf.reduce_sum(self.spatial_action * self.spatial_action_selected, axis=1)
       non_spatial_action_prob = tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected, axis=1)
 
-      q_value = spatial_action_prob + non_spatial_action_prob
+      q_value = spatial_action_prob * self.valid_spatial_action + non_spatial_action_prob * self.valid_non_spatial_action
       self.delta = self.value_target - q_value
       self.clipped_error = tf.where(tf.abs(self.delta) < 1.0,
                                     0.5 * tf.square(self.delta),
@@ -155,6 +155,9 @@ class DeepQAgent(base_agent.BaseAgent):
 
   def update(self, rbs, disc, lr, cter):
     # Compute R, which is value of the last observation
+    spatial_action = None
+    non_spatial_action = None
+
     obs = rbs[-1][-1]
     if obs.last():
       R = 0
@@ -173,17 +176,11 @@ class DeepQAgent(base_agent.BaseAgent):
       spatial_action, non_spatial_action = self.sess.run([self.spatial_action, self.non_spatial_action], feed_dict=feed)
       q_spatial = np.max(spatial_action, axis=1)
       q_non_spatial = np.max(non_spatial_action, axis=1)
-      q_value = q_spatial + q_non_spatial
-      R = q_value[0]
 
     # Compute targets and masks
     minimaps = []
     screens = []
     infos = []
-
-    value_target = np.zeros([len(rbs)], dtype=np.float32)
-    value_target[-1] = R
-
     valid_spatial_action = np.zeros([len(rbs)], dtype=np.float32)
     spatial_action_selected = np.zeros([len(rbs), self.ssize**2], dtype=np.float32)
     valid_non_spatial_action = np.zeros([len(rbs), len(actions.FUNCTIONS)], dtype=np.float32)
@@ -203,11 +200,8 @@ class DeepQAgent(base_agent.BaseAgent):
       screens.append(screen)
       infos.append(info)
 
-      reward = obs.reward
       act_id = action.function
       act_args = action.arguments
-
-      value_target[i] = reward + disc * value_target[i-1]
 
       #valid_actions = obs.observation["available_actions"]
       valid_actions = obs.observation.available_actions
@@ -220,6 +214,18 @@ class DeepQAgent(base_agent.BaseAgent):
           ind = act_arg[1] * self.ssize + act_arg[0]
           valid_spatial_action[i] = 1
           spatial_action_selected[i, ind] = 1
+
+
+    value_target = np.zeros([len(rbs)], dtype=np.float32)
+    if spatial_action is not None:
+      q_value = q_spatial * valid_spatial_action + q_non_spatial * valid_non_spatial_action
+      R = q_value[0]
+      
+    value_target[-1] = R
+
+    for i, [obs, action, next_obs] in enumerate(rbs):
+      reward = obs.reward
+      value_target[i] = reward + disc * value_target[i-1]
 
     minimaps = np.concatenate(minimaps, axis=0)
     screens = np.concatenate(screens, axis=0)
