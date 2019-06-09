@@ -216,8 +216,8 @@ class DeepQAgent(base_agent.BaseAgent):
 
     value_target = np.zeros([len(rbs)], dtype=np.float32)
     if spatial_action is not None:
-      q_spatial = np.max(spatial_action * valid_spatial_action, axis=1)
-      q_non_spatial = np.max(non_spatial_action * valid_non_spatial_action, axis=1)
+      q_spatial = np.max(spatial_action, axis=1)
+      q_non_spatial = np.max(non_spatial_action, axis=1)
       q_value = q_spatial + q_non_spatial
       R = q_value[0]
       
