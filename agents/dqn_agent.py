@@ -167,7 +167,8 @@ class DeepQAgent(base_agent.BaseAgent):
       spatial_action, non_spatial_action = self.sess.run([self.spatial_action, self.non_spatial_action], feed_dict=feed)
       q_spatial = np.max(spatial_action, axis=1)
       q_non_spatial = np.max(non_spatial_action, axis=1)
-      R = q_spatial + q_non_spatial
+      q_value = q_spatial + q_non_spatial
+      R = q_value[0]
 
     # Compute targets and masks
     minimaps = []
