@@ -31,4 +31,4 @@ python agent.py --map=DefeatRoaches
 After pysc2 installed, the training can be also run in this way  
 python -m pysc2.bin.agent --map CollectMineralShards --agent agents.a3c_agent.A3CAgent  
 
-python agent.py --map=MoveToBeacon --max_agent_steps=60 --agent=agents.dqn_agent.DeepQAgent --continuation=True
+python agent.py --map=MoveToBeacon --max_agent_steps=120 --agent=agents.dqn_agent.DeepQAgent --continuation=True

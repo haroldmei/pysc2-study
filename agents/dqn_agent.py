@@ -24,6 +24,7 @@ class DeepQAgent(base_agent.BaseAgent):
     self.msize = 64 #msize[0]
     self.ssize = 64 #ssize[0]
     self.isize = len(actions.FUNCTIONS)
+    self.ispatial = 10
 
 
   def setup(self, sess, summary_writer):
@@ -75,12 +76,12 @@ class DeepQAgent(base_agent.BaseAgent):
       spatial_action_prob = tf.clip_by_value(tf.reduce_sum(self.spatial_action * self.spatial_action_selected, axis=1), 1e-10, 1.)
       non_spatial_action_prob = tf.clip_by_value(tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected * self.valid_non_spatial_action, axis=1), 1e-10, 1.)
 
-      q_value = spatial_action_prob * self.valid_spatial_action + non_spatial_action_prob
+      q_value = spatial_action_prob * self.valid_spatial_action * self.ispatial + non_spatial_action_prob
       self.delta = self.value_target - q_value
       #self.clipped_error = tf.where(tf.abs(self.delta) < 1.0, 0.5 * tf.square(self.delta), tf.abs(self.delta) - 0.5, name='clipped_error')
       #value_loss = tf.reduce_mean(self.clipped_error, name='value_loss')
       
-      value_loss = tf.reduce_mean(self.delta * self.delta)
+      value_loss = tf.reduce_mean(tf.square(self.delta))
 
       self.summary.append(tf.summary.histogram('spatial_action_prob', spatial_action_prob))
       self.summary.append(tf.summary.histogram('non_spatial_action_prob', non_spatial_action_prob))
@@ -219,7 +220,7 @@ class DeepQAgent(base_agent.BaseAgent):
     if spatial_action is not None:
       q_spatial = np.max(spatial_action * valid_spatial_action[0], axis=1)
       q_non_spatial = np.max(non_spatial_action * valid_non_spatial_action[0], axis=1)
-      q_value = q_spatial + q_non_spatial
+      q_value = self.ispatial*q_spatial + q_non_spatial
       R = q_value[0]
       
     value_target[-1] = R
