@@ -96,6 +96,7 @@ class DeepQAgent(base_agent.BaseAgent):
       self.saver = tf.train.Saver(max_to_keep=100)
 
 
+
   def step(self, obs):
     minimap = np.array(obs.observation.feature_minimap, dtype=np.float32)
     minimap = np.expand_dims(U.preprocess_minimap(minimap), axis=0)
