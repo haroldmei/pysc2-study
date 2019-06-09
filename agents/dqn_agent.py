@@ -76,8 +76,11 @@ class DeepQAgent(base_agent.BaseAgent):
       non_spatial_action_prob = tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected, axis=1)
 
       q_value = spatial_action_prob + non_spatial_action_prob
-      advantage = self.value_target - q_value
-      value_loss = tf.reduce_mean(advantage*advantage)
+      self.delta = self.value_target - q_value
+      self.clipped_error = tf.where(tf.abs(self.delta) < 1.0,
+                                    0.5 * tf.square(self.delta),
+                                    tf.abs(self.delta) - 0.5, name='clipped_error')
+      value_loss = tf.reduce_mean(self.clipped_error, name='value_loss')
 
       self.summary.append(tf.summary.histogram('spatial_action_prob', spatial_action_prob))
       self.summary.append(tf.summary.histogram('non_spatial_action_prob', non_spatial_action_prob))
