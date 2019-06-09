@@ -13,7 +13,7 @@ from agents.network import build_net
 import utils as U
 
 
-class A3CAgent(base_agent.BaseAgent):
+class DeepQAgent(base_agent.BaseAgent):
   """An agent specifically for solving the mini-game maps."""
   def __init__(self, name='A3C/A3CAgent'):
     self.name = name
