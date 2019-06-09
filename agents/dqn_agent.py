@@ -72,10 +72,10 @@ class DeepQAgent(base_agent.BaseAgent):
       self.value_target = tf.placeholder(tf.float32, [None], name='value_target')
 
       # Compute log probability
-      spatial_action_prob = tf.reduce_sum(self.spatial_action * self.spatial_action_selected, axis=1)
-      non_spatial_action_prob = tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected, axis=1)
+      spatial_action_prob = tf.reduce_sum(self.spatial_action * self.spatial_action_selected * self.valid_spatial_action, axis=1)
+      non_spatial_action_prob = tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected * self.valid_non_spatial_action, axis=1)
 
-      q_value = spatial_action_prob * self.valid_spatial_action + non_spatial_action_prob * self.valid_non_spatial_action
+      q_value = spatial_action_prob + non_spatial_action_prob
       self.delta = self.value_target - q_value
       self.clipped_error = tf.where(tf.abs(self.delta) < 1.0,
                                     0.5 * tf.square(self.delta),
