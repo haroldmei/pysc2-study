@@ -72,15 +72,15 @@ class DeepQAgent(base_agent.BaseAgent):
       self.value_target = tf.placeholder(tf.float32, [None], name='value_target')
 
       # Compute log probability
-      spatial_action_prob = tf.reduce_sum(self.spatial_action * self.spatial_action_selected, axis=1)
-      non_spatial_action_prob = tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected * self.valid_non_spatial_action, axis=1)
+      spatial_action_prob = tf.clip_by_value(tf.reduce_sum(self.spatial_action * self.spatial_action_selected, axis=1), 1e-10, 1.)
+      non_spatial_action_prob = tf.clip_by_value(tf.reduce_sum(self.non_spatial_action * self.non_spatial_action_selected * self.valid_non_spatial_action, axis=1), 1e-10, 1.)
 
       q_value = spatial_action_prob * self.valid_spatial_action + non_spatial_action_prob
       self.delta = self.value_target - q_value
-      self.clipped_error = tf.where(tf.abs(self.delta) < 1.0,
-                                    0.5 * tf.square(self.delta),
-                                    tf.abs(self.delta) - 0.5, name='clipped_error')
-      value_loss = tf.reduce_mean(self.clipped_error, name='value_loss')
+      #self.clipped_error = tf.where(tf.abs(self.delta) < 1.0, 0.5 * tf.square(self.delta), tf.abs(self.delta) - 0.5, name='clipped_error')
+      #value_loss = tf.reduce_mean(self.clipped_error, name='value_loss')
+      
+      value_loss = tf.reduce_mean(self.delta * self.delta)
 
       self.summary.append(tf.summary.histogram('spatial_action_prob', spatial_action_prob))
       self.summary.append(tf.summary.histogram('non_spatial_action_prob', non_spatial_action_prob))
@@ -170,6 +170,7 @@ class DeepQAgent(base_agent.BaseAgent):
       info[0, obs.observation.available_actions] = 1
 
       # first get probabilities for each action; Then greedly pick the largest to calculate q value. one hot vector softmax
+      # have low confidence, just use full episode and the last observation R should be just 0.
       feed = {self.minimap: minimap,
               self.screen: screen,
               self.info: info}
@@ -216,8 +217,8 @@ class DeepQAgent(base_agent.BaseAgent):
 
     value_target = np.zeros([len(rbs)], dtype=np.float32)
     if spatial_action is not None:
-      q_spatial = np.max(spatial_action, axis=1)
-      q_non_spatial = np.max(non_spatial_action, axis=1)
+      q_spatial = np.max(spatial_action * valid_spatial_action[0], axis=1)
+      q_non_spatial = np.max(non_spatial_action * valid_non_spatial_action[0], axis=1)
       q_value = q_spatial + q_non_spatial
       R = q_value[0]
       
