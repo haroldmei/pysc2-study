@@ -2,7 +2,7 @@
 
 Course project  
 A3C and DQN algorithms:  
-Q-learning: http://dx.doi.org/10.1038/nature14236    
+Q-learning: https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf    
 Asynchronous A3C and DQN: http://arxiv.org/abs/1602.01783  
 SC2LE: http://arxiv.org/abs/1708.04782  
 Code adaptered from https://github.com/deepmind/pysc2, https://github.com/xhujoy/pysc2-agents and other github projects;  
