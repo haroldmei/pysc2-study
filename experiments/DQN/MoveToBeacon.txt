@@ -1,0 +1,37 @@
+I0610 10:32:01.765571 14200 sc2_env.py:632] Episode 1 finished after 1920 game steps. Outcome: [1], reward: [1], score: [25]
+I0610 10:32:01.765571 14200 agent.py:199] Your score is: 25, mean score is 25.0 !
+I0610 10:32:01.782553 14200 sc2_env.py:462] Starting episode: 2
+I0610 10:32:17.335968 14200 sc2_env.py:632] Episode 2 finished after 1920 game steps. Outcome: [1], reward: [0], score: [24]
+I0610 10:32:17.336967 14200 agent.py:199] Your score is: 24, mean score is 24.5 !
+I0610 10:32:17.346912 14200 sc2_env.py:462] Starting episode: 3
+I0610 10:32:32.897933 14200 sc2_env.py:632] Episode 3 finished after 1920 game steps. Outcome: [1], reward: [1], score: [28]
+I0610 10:32:32.897933 14200 agent.py:199] Your score is: 28, mean score is 25.666666666666668 !
+I0610 10:32:32.908902 14200 sc2_env.py:462] Starting episode: 4
+I0610 10:32:48.422656 14200 sc2_env.py:632] Episode 4 finished after 1920 game steps. Outcome: [1], reward: [0], score: [22]
+I0610 10:32:48.422656 14200 agent.py:199] Your score is: 22, mean score is 24.75 !
+I0610 10:32:48.434598 14200 sc2_env.py:462] Starting episode: 5
+I0610 10:33:03.969633 14200 sc2_env.py:632] Episode 5 finished after 1920 game steps. Outcome: [1], reward: [0], score: [22]
+I0610 10:33:03.970622 14200 agent.py:199] Your score is: 22, mean score is 24.2 !
+I0610 10:33:03.980577 14200 sc2_env.py:462] Starting episode: 6
+I0610 10:33:18.994753 14200 sc2_env.py:632] Episode 6 finished after 1920 game steps. Outcome: [1], reward: [0], score: [27]
+I0610 10:33:18.994753 14200 agent.py:199] Your score is: 27, mean score is 24.666666666666668 !
+I0610 10:33:19.007690 14200 sc2_env.py:462] Starting episode: 7
+I0610 10:33:30.418023 14200 sc2_env.py:632] Episode 7 finished after 1920 game steps. Outcome: [1], reward: [0], score: [23]
+I0610 10:33:30.419026 14200 agent.py:199] Your score is: 23, mean score is 24.428571428571427 !
+I0610 10:33:30.429964 14200 sc2_env.py:462] Starting episode: 8
+I0610 10:33:41.581136 14200 sc2_env.py:632] Episode 8 finished after 1920 game steps. Outcome: [1], reward: [0], score: [20]
+I0610 10:33:41.582133 14200 agent.py:199] Your score is: 20, mean score is 23.875 !
+I0610 10:33:41.592128 14200 sc2_env.py:462] Starting episode: 9
+I0610 10:33:52.507076 14200 sc2_env.py:632] Episode 9 finished after 1920 game steps. Outcome: [1], reward: [0], score: [12]
+I0610 10:33:52.507076 14200 agent.py:199] Your score is: 12, mean score is 22.555555555555557 !
+I0610 10:33:52.518069 14200 sc2_env.py:462] Starting episode: 10
+I0610 10:34:03.438830 14200 sc2_env.py:632] Episode 10 finished after 1920 game steps. Outcome: [1], reward: [1], score: [13]
+I0610 10:34:03.439827 14200 agent.py:199] Your score is: 13, mean score is 21.6 !
+I0610 10:34:03.452792 14200 sc2_env.py:462] Starting episode: 11
+I0610 10:34:14.421214 14200 sc2_env.py:632] Episode 11 finished after 1920 game steps. Outcome: [1], reward: [0], score: [19]
+I0610 10:34:14.422219 14200 agent.py:199] Your score is: 19, mean score is 21.363636363636363 !
+I0610 10:34:14.432204 14200 sc2_env.py:462] Starting episode: 12
+I0610 10:34:25.438266 14200 sc2_env.py:632] Episode 12 finished after 1920 game steps. Outcome: [1], reward: [0], score: [17]
+I0610 10:34:25.439231 14200 agent.py:199] Your score is: 17, mean score is 21.0 !
+I0610 10:34:25.449234 14200 sc2_env.py:462] Starting episode: 13
+Took 164.673 seconds for 2978 steps: 18.084 fps
