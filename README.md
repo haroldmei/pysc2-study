@@ -3,10 +3,9 @@
 ## Course project  
 Deep Reinforcement Learning with A3C and DQN algorithms.  
 
-### A3C plot for MoveToBeacon,FindAndDefeatZerglings and DefeatRoaches.
+### A3C plot for MoveToBeacon,FindAndDefeatZerglings and DefeatRoaches; the slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow (MoveToBeacon and FindAndDefeatZerglings).
 ![A3C score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/A3C_score.png)
 
-### The slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow (MoveToBeacon and FindAndDefeatZerglings).
 
 ![DQN score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/DQN_score.png
 
