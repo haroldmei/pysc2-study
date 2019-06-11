@@ -2,7 +2,7 @@
 
 Course project  
 A3C and DQN algorithms:  
-### The slow training speed of DQN makes it look like it's reaching a sub-optimal, but the average score curve is still increasing!!
+### The slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow.
 ![DQN score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/DQN_score.png)
 
 Deep Q-Network: https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf    
