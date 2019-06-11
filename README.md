@@ -2,12 +2,14 @@
 
 Course project  
 A3C and DQN algorithms:  
+### The slow training speed of DQN makes it look like it's reaching a sub-optimal!!
+
 Deep Q-Network: https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf    
 Asynchronous A3C and DQN: http://arxiv.org/abs/1602.01783  
 SC2LE: http://arxiv.org/abs/1708.04782  
 Code adaptered from https://github.com/deepmind/pysc2, https://github.com/xhujoy/pysc2-agents and other github projects;  
 
-
+![alt text](http://url/to/img.png)
 
 Environment: Windows 10 + 8G nVidia GPU, Debian GNU/Linux 9.9 + 8G Tesla GPU   
 TensorFlow 1.13
