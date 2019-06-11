@@ -1,6 +1,6 @@
 ## pysc2-study
 
-## Course project  
+## Course project, Play StartCraft II with deep reinforcement learning  
 Deep Reinforcement Learning with A3C and DQN algorithms.  
 
 #### A3C/DQN score plots. The slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow (MoveToBeacon and FindAndDefeatZerglings).
