@@ -2,7 +2,7 @@
 
 Course project  
 A3C and DQN algorithms:  
-## The slow training speed of DQN makes it look like it's reaching a sub-optimal!!
+### The slow training speed of DQN makes it look like it's reaching a sub-optimal!!
 
 Deep Q-Network: https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf    
 Asynchronous A3C and DQN: http://arxiv.org/abs/1602.01783  
