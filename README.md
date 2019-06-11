@@ -3,8 +3,13 @@
 ## Course project  
 Deep Reinforcement Learning with A3C and DQN algorithms.  
 
-### The slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow (MoveToBeacon and FindAndDefeatZerglings).
+#### A3C/DQN score plots. The slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow (MoveToBeacon and FindAndDefeatZerglings).
+![A3C score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/A3C_score.png)
+
+
 ![DQN score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/DQN_score.png)
+
+
 
 Deep Q-Network: https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf    
 Asynchronous A3C and DQN: http://arxiv.org/abs/1602.01783  
