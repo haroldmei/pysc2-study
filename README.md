@@ -1,7 +1,8 @@
 ## pysc2-study
 
-Course project  
-A3C and DQN algorithms:  
+## Course project  
+Deep Reinforcement Learning with A3C and DQN algorithms.  
+
 ### The slow training speed of DQN makes it look like it's reaching a sub-optimal, but it's actually still improving, very slow.
 ![DQN score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/DQN_score.png)
 
