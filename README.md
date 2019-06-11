@@ -1,7 +1,9 @@
 ## pysc2-study
 
 Course project  
-A3C and DQN (The slow training speed makes it look like it's reaching a sub-optimal!!) algorithms:  
+A3C and DQN algorithms:  
+## The slow training speed of DQN makes it look like it's reaching a sub-optimal!!
+
 Deep Q-Network: https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf    
 Asynchronous A3C and DQN: http://arxiv.org/abs/1602.01783  
 SC2LE: http://arxiv.org/abs/1708.04782  
