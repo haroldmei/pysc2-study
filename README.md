@@ -7,7 +7,7 @@ Deep Reinforcement Learning with A3C and DQN algorithms.
 ![A3C score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/A3C_score.png)
 
 
-![DQN score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/DQN_score.png
+![DQN score](https://github.com/haroldmei/pysc2-study/blob/master/experiments/DQN_score.png)
 
 
 
